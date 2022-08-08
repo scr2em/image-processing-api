@@ -1,5 +1,6 @@
 import { Response, Router, Request } from "express";
 import fs from "fs/promises";
+import fsExtra from "fs-extra";
 import path from "path";
 import { isFileExist, resizeImage } from "../utils";
 import { requireQueryString } from "../middlewares/requireQueryString";
@@ -13,7 +14,7 @@ router.get(
     const { filename } = req.query;
 
     // check if requested file exists
-    const filePath = path.normalize(`${__dirname}/../placeholders/${filename}.jpg`);
+    const filePath = path.normalize(`${__dirname}/../../placeholders/${filename}.jpg`);
 
     if (!(await isFileExist(filePath))) {
       return res.status(400).send(`There is no image with this file name.`);
@@ -46,7 +47,7 @@ router.get(
     }
     // save it on disk
     try {
-      await fs.writeFile(thumbPath, data);
+      await fsExtra.outputFile(thumbPath, data);
       return res.sendFile(thumbPath);
     } catch (e) {
       console.log(e);
